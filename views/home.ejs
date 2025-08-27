@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <title>Asset Management – Home</title>
+</head>
+
+<body class="container">
+  <!-- Hero Banner -->
+  <div class="hero-banner">
+    <img src="/images/home-banner.jpg" class="hero-image" alt="Banner" />
+    <h1 class="hero-text">Asset Management System</h1>
+  </div>
+
+  <!-- Navigation Links -->
+  <div class="menu">
+    <a href="/allocate" class="btn">Allocate Device</a>
+    <a href="/deallocate" class="btn">Deallocate Device</a>
+    <a href="/allocations" class="btn">View Allocations</a>
+  </div>
+
+  <!-- Employee Table -->
+  <h2>Employees</h2>
+  <table class="table">
+    <thead>
+      <tr><th>ID</th><th>Name</th><th>Department</th></tr>
+    </thead>
+    <tbody>
+      <% employees.forEach(emp => { %>
+        <tr>
+          <td><%= emp.employee_id %></td>
+          <td><%= emp.name %></td>
+          <td><%= emp.department %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <!-- Device Table -->
+  <h2>Devices</h2>
+  <table class="table">
+    <thead>
+      <tr><th>ID</th><th>Brand</th><th>Model</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <% devices.forEach(dev => { %>
+        <tr>
+          <td><%= dev.device_id %></td>
+          <td><%= dev.brand %></td>
+          <td><%= dev.model %></td>
+          <td><%= dev.status %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <h3>Add New Employee</h3>
+<form action="/api/employees" method="POST">
+  <input name="name" placeholder="Name" required>
+  <input name="department" placeholder="Department" required>
+  <button type="submit">Add Employee</button>
+</form>
+
+<h3>Add New Device</h3>
+<form action="/api/devices" method="POST">
+  <input name="brand" placeholder="Brand" required />
+  <input name="model" placeholder="Model" required />
+  <select name="status" required>
+    <option value="available">Available</option>
+    <option value="allocated">Allocated</option>
+  </select>
+  <button type="submit">Add Device</button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,184 @@
+/* 1. Gradient background for full-screen effect */
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+  min-height: 100vh;
+}
+
+/* 2. Glass-like frosted container */
+.container {
+  max-width: 480px;
+  margin: 60px auto;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 3. Animated heading */
+h1 {
+  color: #2a4d69;
+  text-align: center;
+  margin-bottom: 20px;
+  animation: fadeInDown 0.7s ease-out both;
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 4. Layout containers */
+.form, .menu {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* 5. Input field design */
+.label-field label {
+  font-size: 0.9em;
+  color: #555;
+  margin-bottom: 5px;
+}
+input {
+  padding: 10px;
+  border: 1px solid #ccd1dc;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+input:focus {
+  outline: none;
+  border-color: #2575fc;
+}
+
+/* 6. Elegant buttons with hover effects */
+/* Button base style */
+button {
+  position: relative;
+  padding: 14px 20px;
+  font-size: 16px;
+  color: #fff;
+  background: #111;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 1;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Animated border using a pseudo element */
+button::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  z-index: -1;
+  background: linear-gradient(
+    270deg,
+    #ff00ff,
+    #00ffff,
+    #ff00ff,
+    #00ffff
+  );
+  background-size: 400% 400%;
+  border-radius: 8px;
+  animation: animatedBorder 5s linear infinite;
+}
+
+/* Neon glow effect on hover */
+button:hover {
+  box-shadow:
+    0 0 8px #0ff,
+    0 0 16px #0ff,
+    0 0 24px #0ff;
+  border-color: #0ff;
+}
+
+/* Animate the border gradient */
+@keyframes animatedBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+.btn:active, button:active {
+  transform: translateY(1px);
+}
+
+/* 7. Frosted glass-styled cards */
+.card {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  padding: 15px;
+  margin: 12px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+/* 8. Styled JSON output block */
+pre {
+  background: rgba(255, 255, 255, 0.6);
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.9em;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.table th, .table td {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.table th {
+  background-color: #2575fc;
+  color: white;
+  font-weight: bold;
+}
+/* hero banner — responsive, keeps aspect ratio */
+.hero-banner {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.hero-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.hero-text {
+  position: absolute;
+  bottom: 20%;
+  left: 5%;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+}    

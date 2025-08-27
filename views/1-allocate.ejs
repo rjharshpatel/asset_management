@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <title>Allocate Device</title>
+</head>
+<body class="container">
+
+  <!-- Hero banner -->
+  <div class="hero-banner">
+    <img src="/images/allocate.jpg" class="hero-image" alt="Allocate device">
+    <h1 class="hero-text">Allocate Device</h1>
+  </div>
+
+  <!-- Allocate form -->
+  <div class="form">
+    <div class="label-field">
+      <label for="empId">Employee ID</label>
+      <input id="empId" placeholder="Enter employee ID" />
+    </div>
+    <div class="label-field">
+      <label for="devId">Device ID</label>
+      <input id="devId" placeholder="Enter device ID" />
+    </div>
+    <button id="allocateBtn">Allocate</button>
+  </div>
+
+  <!-- Availability table -->
+  <h2 style="margin-top:2rem">Available Devices</h2>
+  <table id="availTable" class="table" style="display:none">
+    <thead><tr><th>ID</th><th>Brand</th><th>Model</th></tr></thead>
+    <tbody id="availBody"></tbody>
+  </table>
+
+  <script src="/js/allocation.js"></script>
+</body>
+</html>
