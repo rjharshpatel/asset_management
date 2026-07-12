@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Allocate Device</title>
+<title>Active Allocations</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
@@ -13,35 +13,26 @@
     <a href="/" class="logo"><span class="dot"></span>Asset Manager</a>
     <div class="nav-links">
       <a href="/">Dashboard</a>
-      <a href="/allocate" class="active">Allocate</a>
+      <a href="/allocate">Allocate</a>
       <a href="/deallocate">Deallocate</a>
-      <a href="/allocations">Active Allocations</a>
+      <a href="/allocations" class="active">Active Allocations</a>
     </div>
   </nav>
 </header>
 
 <main class="wrap">
-  <h1>Allocate a Device</h1>
-  <p class="subtitle">Assign an available device to an employee.</p>
-
-  <div class="panel" style="max-width:480px;">
-    <div class="field">
-      <label>Employee</label>
-      <select id="empSelect"><option value="">Loading employees...</option></select>
-    </div>
-    <div class="field">
-      <label>Available Device</label>
-      <select id="devSelect"><option value="">Loading devices...</option></select>
-    </div>
-    <button id="allocateBtn" class="btn btn-primary" style="width:100%; justify-content:center;">Allocate Device</button>
-  </div>
+  <h1>Active Allocations</h1>
+  <p class="subtitle">Every device currently checked out, and who has it.</p>
 
   <div class="panel">
-    <div class="panel-head"><span class="panel-title">Available Devices</span></div>
+    <div class="panel-head">
+      <span class="panel-title">All Active Allocations</span>
+      <div class="search-box"><input id="allocSearch" placeholder="Search by name, brand, model..."></div>
+    </div>
     <table>
-      <thead><tr><th>Brand</th><th>Model</th></tr></thead>
-      <tbody id="availableTable">
-        <tr class="empty-row"><td colspan="2"><span class="spinner"></span> Loading...</td></tr>
+      <thead><tr><th>Employee</th><th>Brand</th><th>Model</th><th>Allocated Date</th></tr></thead>
+      <tbody id="allocTable">
+        <tr class="empty-row"><td colspan="4"><span class="spinner"></span> Loading...</td></tr>
       </tbody>
     </table>
   </div>
@@ -49,55 +40,19 @@
 
 <script src="/app.js"></script>
 <script>
-  let employees = [], availableDevices = [];
-
-  async function loadData() {
-    [employees, availableDevices] = await Promise.all([
-      apiGet('/api/employees'),
-      apiGet('/api/available-devices')
-    ]);
-    renderSelects();
-    renderTable();
+  async function loadAllocations() {
+    const rows = await apiGet('/api/allocations');
+    const tbody = document.getElementById('allocTable');
+    tbody.innerHTML = rows.length
+      ? rows.map(r => `
+          <tr class="alloc-row" data-search="${(r.employee + ' ' + r.brand + ' ' + r.model).toLowerCase()}">
+            <td>${r.employee}</td><td>${r.brand}</td><td>${r.model}</td>
+            <td>${new Date(r.allocated_date).toLocaleDateString()}</td>
+          </tr>`).join('')
+      : '<tr class="empty-row"><td colspan="4">No active allocations.</td></tr>';
+    attachSearch('allocSearch', '.alloc-row', (row, q) => row.dataset.search.includes(q));
   }
-
-  function renderSelects() {
-    const empSelect = document.getElementById('empSelect');
-    empSelect.innerHTML = employees.length
-      ? '<option value="">Select employee...</option>' + employees.map(e => `<option value="${e.employee_id}">${e.name}${e.department ? ' — ' + e.department : ''}</option>`).join('')
-      : '<option value="">No employees found</option>';
-
-    const devSelect = document.getElementById('devSelect');
-    devSelect.innerHTML = availableDevices.length
-      ? '<option value="">Select device...</option>' + availableDevices.map(d => `<option value="${d.device_id}">${d.brand} ${d.model}</option>`).join('')
-      : '<option value="">No available devices</option>';
-  }
-
-  function renderTable() {
-    const tbody = document.getElementById('availableTable');
-    tbody.innerHTML = availableDevices.length
-      ? availableDevices.map(d => `<tr><td>${d.brand}</td><td>${d.model}</td></tr>`).join('')
-      : '<tr class="empty-row"><td colspan="2">No available devices right now.</td></tr>';
-  }
-
-  document.getElementById('allocateBtn').addEventListener('click', async () => {
-    const employee_id = document.getElementById('empSelect').value;
-    const device_id = document.getElementById('devSelect').value;
-    if (!employee_id || !device_id) { toast('Select both an employee and a device', 'error'); return; }
-
-    const btn = document.getElementById('allocateBtn');
-    btn.disabled = true; btn.textContent = 'Allocating...';
-    try {
-      await apiPost('/api/allocate', { employee_id, device_id });
-      toast('✅ Device allocated successfully');
-      await loadData(); // refresh without page reload
-    } catch (e) {
-      toast('Something went wrong', 'error');
-    } finally {
-      btn.disabled = false; btn.textContent = 'Allocate Device';
-    }
-  });
-
-  loadData();
+  loadAllocations();
 </script>
 </body>
 </html>
