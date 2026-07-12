@@ -139,6 +139,38 @@
     { value: <%= devices.filter(d => d.status === 'available').length %>, color: '#5EC26A' },
     { value: <%= devices.filter(d => d.status === 'allocated').length %>, color: '#F0A93B' }
   ]);
+
+  // Add Employee — AJAX
+  document.querySelector('#empModal form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = Object.fromEntries(new FormData(form));
+    try {
+      await apiPost('/api/employees', data);
+      toast('✅ Employee added');
+      closeModal('empModal');
+      form.reset();
+      setTimeout(() => location.reload(), 600); // refresh table + stats
+    } catch (err) {
+      toast('Something went wrong', 'error');
+    }
+  });
+
+  // Add Device — AJAX
+  document.querySelector('#devModal form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = Object.fromEntries(new FormData(form));
+    try {
+      await apiPost('/api/devices', data);
+      toast('✅ Device added');
+      closeModal('devModal');
+      form.reset();
+      setTimeout(() => location.reload(), 600); // refresh table + stats
+    } catch (err) {
+      toast('Something went wrong', 'error');
+    }
+  });
 </script>
 </body>
 </html>
