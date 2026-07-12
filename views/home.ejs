@@ -1,78 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/css/styles.css" />
-  <title>Asset Management – Home</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asset Management — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
 </head>
+<body>
+<header>
+  <nav>
+    <a href="/" class="logo"><span class="dot"></span>Asset Manager</a>
+    <div class="nav-links">
+      <a href="/" class="active">Dashboard</a>
+      <a href="/allocate">Allocate</a>
+      <a href="/deallocate">Deallocate</a>
+      <a href="/allocations">Active Allocations</a>
+    </div>
+  </nav>
+</header>
 
-<body class="container">
-  <!-- Hero Banner -->
-  <div class="hero-banner">
-    <img src="/images/home-banner.jpg" class="hero-image" alt="Banner" />
-    <h1 class="hero-text">Asset Management System</h1>
+<main class="wrap">
+  <h1>Dashboard</h1>
+  <p class="subtitle">Live overview of employees, devices, and current allocations.</p>
+
+  <div class="stats">
+    <div class="stat-card cyan"><div class="stat-num"><%= employees.length %></div><div class="stat-label">Employees</div></div>
+    <div class="stat-card amber"><div class="stat-num"><%= devices.length %></div><div class="stat-label">Total Devices</div></div>
+    <div class="stat-card green"><div class="stat-num"><%= devices.filter(d => d.status === 'available').length %></div><div class="stat-label">Available</div></div>
+    <div class="stat-card rose"><div class="stat-num"><%= devices.filter(d => d.status === 'allocated').length %></div><div class="stat-label">Allocated</div></div>
   </div>
 
-  <!-- Navigation Links -->
-  <div class="menu">
-    <a href="/allocate" class="btn">Allocate Device</a>
-    <a href="/deallocate" class="btn">Deallocate Device</a>
-    <a href="/allocations" class="btn">View Allocations</a>
+  <div class="panel">
+    <div class="panel-head">
+      <span class="panel-title">Device Status Breakdown</span>
+    </div>
+    <div class="chart-row">
+      <svg id="statusDonut" width="100" height="100" viewBox="0 0 100 100"></svg>
+      <div class="donut-legend">
+        <div class="legend-item"><span class="legend-dot" style="background:#5EC26A;"></span>Available (<%= devices.filter(d => d.status === 'available').length %>)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#F0A93B;"></span>Allocated (<%= devices.filter(d => d.status === 'allocated').length %>)</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Employee Table -->
-  <h2>Employees</h2>
-  <table class="table">
-    <thead>
-      <tr><th>ID</th><th>Name</th><th>Department</th></tr>
-    </thead>
-    <tbody>
-      <% employees.forEach(emp => { %>
-        <tr>
-          <td><%= emp.employee_id %></td>
-          <td><%= emp.name %></td>
-          <td><%= emp.department %></td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Employees</span>
+        <div style="display:flex; gap:10px;">
+          <div class="search-box"><input id="empSearch" placeholder="Search employees..."></div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('empModal')">+ Add</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Name</th><th>Department</th></tr></thead>
+        <tbody>
+          <% if (employees.length === 0) { %>
+            <tr class="empty-row"><td colspan="2">No employees yet.</td></tr>
+          <% } %>
+          <% employees.forEach(e => { %>
+            <tr class="emp-row" data-search="<%= (e.name + ' ' + (e.department||'')).toLowerCase() %>">
+              <td><%= e.name %></td><td><%= e.department || '—' %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
 
-  <!-- Device Table -->
-  <h2>Devices</h2>
-  <table class="table">
-    <thead>
-      <tr><th>ID</th><th>Brand</th><th>Model</th><th>Status</th></tr>
-    </thead>
-    <tbody>
-      <% devices.forEach(dev => { %>
-        <tr>
-          <td><%= dev.device_id %></td>
-          <td><%= dev.brand %></td>
-          <td><%= dev.model %></td>
-          <td><%= dev.status %></td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Devices</span>
+        <div style="display:flex; gap:10px;">
+          <div class="search-box"><input id="devSearch" placeholder="Search devices..."></div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('devModal')">+ Add</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Brand</th><th>Model</th><th>Status</th></tr></thead>
+        <tbody>
+          <% if (devices.length === 0) { %>
+            <tr class="empty-row"><td colspan="3">No devices yet.</td></tr>
+          <% } %>
+          <% devices.forEach(d => { %>
+            <tr class="dev-row" data-search="<%= (d.brand + ' ' + d.model).toLowerCase() %>">
+              <td><%= d.brand %></td><td><%= d.model %></td>
+              <td><span class="badge <%= d.status %>"><%= d.status %></span></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
 
-  <h3>Add New Employee</h3>
-<form action="/api/employees" method="POST">
-  <input name="name" placeholder="Name" required>
-  <input name="department" placeholder="Department" required>
-  <button type="submit">Add Employee</button>
-</form>
+<!-- Add Employee Modal -->
+<div class="modal-overlay" id="empModal">
+  <div class="modal">
+    <h3>Add Employee</h3>
+    <form method="POST" action="/api/employees">
+      <div class="field"><label>Name</label><input name="name" required></div>
+      <div class="field"><label>Department</label><input name="department"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn" onclick="closeModal('empModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Employee</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-<h3>Add New Device</h3>
-<form action="/api/devices" method="POST">
-  <input name="brand" placeholder="Brand" required />
-  <input name="model" placeholder="Model" required />
-  <select name="status" required>
-    <option value="available">Available</option>
-    <option value="allocated">Allocated</option>
-  </select>
-  <button type="submit">Add Device</button>
-</form>
+<!-- Add Device Modal -->
+<div class="modal-overlay" id="devModal">
+  <div class="modal">
+    <h3>Add Device</h3>
+    <form method="POST" action="/api/devices">
+      <div class="field"><label>Brand</label><input name="brand" required></div>
+      <div class="field"><label>Model</label><input name="model" required></div>
+      <div class="field"><label>Status</label>
+        <select name="status">
+          <option value="available">Available</option>
+          <option value="allocated">Allocated</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn" onclick="closeModal('devModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Device</button>
+      </div>
+    </form>
+  </div>
+</div>
 
+<script src="/app.js"></script>
+<script>
+  attachSearch('empSearch', '.emp-row', (row, q) => row.dataset.search.includes(q));
+  attachSearch('devSearch', '.dev-row', (row, q) => row.dataset.search.includes(q));
+  renderDonut('statusDonut', [
+    { value: <%= devices.filter(d => d.status === 'available').length %>, color: '#5EC26A' },
+    { value: <%= devices.filter(d => d.status === 'allocated').length %>, color: '#F0A93B' }
+  ]);
+</script>
 </body>
 </html>
