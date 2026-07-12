@@ -1,29 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/css/styles.css" />
-  <title>Deallocate Device</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deallocate Device</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
 </head>
-<body class="container">
-
-<!-- Inside body tag -->
-<div class="hero-banner">
-  <img src="/images/deallocate.jpg" class="hero-image" alt="Deallocate Banner" />
-  <h1 class="hero-text">Deallocate Device</h1>
-</div>
-
-
-  <!-- Deallocation form -->
-  <div class="form">
-    <div class="label-field">
-      <label for="deallocId">Device ID</label>
-      <input id="deallocId" placeholder="Enter device ID" />
+<body>
+<header>
+  <nav>
+    <a href="/" class="logo"><span class="dot"></span>Asset Manager</a>
+    <div class="nav-links">
+      <a href="/">Dashboard</a>
+      <a href="/allocate">Allocate</a>
+      <a href="/deallocate" class="active">Deallocate</a>
+      <a href="/allocations">Active Allocations</a>
     </div>
-    <button id="deallocateBtn">Deallocate</button>
-  </div>
+  </nav>
+</header>
 
-  <script src="/js/allocation.js"></script>
+<main class="wrap">
+  <h1>Deallocate a Device</h1>
+  <p class="subtitle">Return a currently allocated device to the available pool.</p>
+
+  <div class="panel">
+    <div class="panel-head"><span class="panel-title">Currently Allocated Devices</span></div>
+    <table>
+      <thead><tr><th>Brand</th><th>Model</th><th></th></tr></thead>
+      <tbody id="allocatedTable">
+        <tr class="empty-row"><td colspan="3"><span class="spinner"></span> Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<script src="/app.js"></script>
+<script>
+  async function loadAllocated() {
+    const devices = await apiGet('/api/devices');
+    const allocated = devices.filter(d => d.status === 'allocated');
+    const tbody = document.getElementById('allocatedTable');
+    tbody.innerHTML = allocated.length
+      ? allocated.map(d => `
+          <tr>
+            <td>${d.brand}</td><td>${d.model}</td>
+            <td style="text-align:right;">
+              <button class="btn btn-danger btn-sm" onclick="deallocate(${d.device_id}, this)">Deallocate</button>
+            </td>
+          </tr>`).join('')
+      : '<tr class="empty-row"><td colspan="3">Nothing is currently allocated.</td></tr>';
+  }
+
+  async function deallocate(device_id, btn) {
+    btn.disabled = true; btn.textContent = '...';
+    try {
+      await apiPost('/api/deallocate', { device_id });
+      toast('✅ Device deallocated');
+      await loadAllocated();
+    } catch (e) {
+      toast('Something went wrong', 'error');
+      btn.disabled = false; btn.textContent = 'Deallocate';
+    }
+  }
+
+  loadAllocated();
+</script>
 </body>
 </html>
