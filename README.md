@@ -29,8 +29,14 @@ A full-stack IT asset tracking tool built with Node.js, Express, and MySQL — l
 
 ## 📸 Screenshots
 
-*(Add 2–3 screenshots here: Dashboard, Allocate page, Active Allocations)*
+### Dashboard
+![Dashboard](dashboard.png)
 
+### Allocate a Device
+![Allocate](allocate.png)
+
+### Active Allocations
+![Active Allocations](allocations.png)
 ## 🗄️ Database Schema
 
 ```sql
