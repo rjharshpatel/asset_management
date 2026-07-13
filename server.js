@@ -64,7 +64,7 @@ app.post('/api/deallocate', asyncHandler(async (req, res) => {
     [device_id]
   );
   await pool.query(
-    'UPDATE devices SET status = "available" WHERE device_id = ?',
+    "UPDATE devices SET status = 'available' WHERE device_id = ?"
     [device_id]
   );
   res.json({ message: '✅ Device deallocated' });
