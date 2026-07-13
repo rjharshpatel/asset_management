@@ -39,7 +39,7 @@ app.get('/api/devices', asyncHandler(async (_req, res) => {
 }));
 app.get('/api/available-devices', asyncHandler(async (_req, res) => {
   const [rows] = await pool.query(
-    'SELECT * FROM devices WHERE status = "available"'
+    "SELECT * FROM devices WHERE status = 'available'"
   );
   res.json(rows);
 }));
